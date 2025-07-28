@@ -1,0 +1,40 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:15
+    container_name: stackoverflow-db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: stackoverflow
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - backend-net
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: stackoverflow-api
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: password
+      DB_NAME: stackoverflow
+    ports:
+      - "8080:8080"
+    networks:
+      - backend-net
+
+networks:
+  backend-net:
+
+volumes:
+  pgdata:

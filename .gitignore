@@ -33,7 +33,7 @@ go.work.sum
 
 # Environment files
 .env
-.env.*
+.env
 
 # OS generated files
 .DS_Store

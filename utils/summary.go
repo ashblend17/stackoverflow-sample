@@ -46,12 +46,8 @@ func SummarizeQnA(question string, answers []string) (string, error) {
 		sb.WriteString(fmt.Sprintf("- Answer %d: %s\n", i+1, a))
 	}
 
-	promptText := fmt.Sprintf(`
-You are a helpful assistant that summarizes technical Q&A discussions.
-Given the following StackOverflow question and its answers, write a clear, concise summary of the discussion:
-
-%s
-`, sb.String())
+	promptText := fmt.Sprintf(`You are a helpful assistant that summarizes technical Q&A discussions. Given the following StackOverflow question and its answers, write a clear, concise summary of the discussion:
+	%s`, sb.String())
 	model := geminiClient.GenerativeModel("gemini-2.5-flash")
 	resp, err := model.GenerateContent(context.Background(), genai.Text(promptText))
 	if err != nil {

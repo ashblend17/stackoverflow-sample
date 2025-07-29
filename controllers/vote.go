@@ -8,6 +8,7 @@ import (
 	"github.com/ashblend17/stackoverflow-sample/database"
 	"github.com/ashblend17/stackoverflow-sample/models"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm/clause"
 )
 
 func VoteHandler(itemType string) gin.HandlerFunc {
@@ -70,7 +71,12 @@ func VoteHandler(itemType string) gin.HandlerFunc {
 			UpdatedAt: time.Now(),
 		}
 
-		if err := database.DB.Create(&vote).Error; err != nil {
+		err = database.DB.Clauses(clause.OnConflict{
+			Columns:   []clause.Column{{Name: "user_id"}, {Name: "item_id"}, {Name: "item_type"}},
+			UpdateAll: true,
+		}).Create(&vote).Error
+
+		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Could not cast vote"})
 			return
 		}

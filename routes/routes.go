@@ -19,12 +19,14 @@ func RegisterRoutes(r *gin.Engine) {
 		auth := api.Group("/")
 		auth.Use(middlewares.AuthMiddleware())
 		{
-			auth.POST("/test", func(ctx *gin.Context) { ctx.JSON(200, gin.H{"status": "Auth passed"}) })
+			auth.GET("/test", func(ctx *gin.Context) { ctx.JSON(200, gin.H{"status": "Auth passed"}) })
 			auth.POST("/questions", controllers.CreateQuestion)
 			auth.POST("/questions/:id/answers", controllers.CreateAnswer)
 			auth.POST("/questions/:id/vote", controllers.VoteHandler("question"))
 			auth.POST("/answers/:id/vote", controllers.VoteHandler("answer"))
-			api.GET("/questions/:id/summary", controllers.SummarizeQuestion)
+			auth.GET("/questions/:id/summary", controllers.SummarizeQuestion)
+			auth.GET("/questions/:id", controllers.GetQuestionWithAnswers)
+
 		}
 	}
 }

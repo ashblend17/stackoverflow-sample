@@ -74,3 +74,15 @@ BEFORE UPDATE ON votes
 FOR EACH ROW
 EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER
+
+-- indexes for performance
+CREATE INDEX idx_questions_user_id ON questions(user_id);
+
+CREATE INDEX idx_answers_question_id ON answers(question_id);
+
+CREATE INDEX idx_answers_user_id ON answers(user_id);
+
+CREATE INDEX idx_votes_item_id_type ON votes(item_id, item_type);
+
+
+CREATE INDEX idx_votes_user_item_type ON votes(user_id, item_id, item_type);

@@ -20,13 +20,12 @@ func RegisterRoutes(r *gin.Engine) {
 		auth.Use(middlewares.AuthMiddleware())
 		{
 			auth.GET("/test", func(ctx *gin.Context) { ctx.JSON(200, gin.H{"status": "Auth passed"}) })
-			auth.POST("/questions", controllers.CreateQuestion)
-			auth.POST("/questions/:id/answers", controllers.CreateAnswer)
-			auth.POST("/questions/:id/vote", controllers.VoteHandler("question"))
-			auth.POST("/answers/:id/vote", controllers.VoteHandler("answer"))
-			auth.GET("/questions/:id/summary", controllers.SummarizeQuestion)
-			auth.GET("/questions/:id", controllers.GetQuestionWithAnswers)
-
+			auth.POST("/createQuestion", controllers.CreateQuestion)
+			auth.POST("/question/:id/createAnswer", controllers.CreateAnswer)
+			auth.POST("/question/:id/vote", controllers.VoteHandler("question"))
+			auth.POST("/answer/:id/vote", controllers.VoteHandler("answer"))
+			auth.GET("/question/:id/summary", controllers.SummarizeQuestion)
+			auth.GET("/getQnA/:id", controllers.GetQuestionWithAnswers)
 		}
 	}
 }

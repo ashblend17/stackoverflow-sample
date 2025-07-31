@@ -1,6 +1,6 @@
 # StackOverflow Clone Backend (Golang + PostgreSQL + Gemini LLM)
 
-This is a backend system for a StackOverflow-style Q\&A platform. It is built using **Golang**, **PostgreSQL**, and integrates **Gemini** for summarization.
+This is a backend system for a StackOverflow-style Q\&A platform. It is built using **Golang**, **PostgreSQL** on aws ec2, and integrates **Gemini** for summarization.
 
 
 ---
@@ -32,17 +32,12 @@ votes - id, user_id, item_id, item_type, vote_type, created_at, updated_at
 
 ```
 
+Indexes:
 - questions(user_id) – fetch questions by user
-
 - answers(question_id) – fetch answers for a question
-
 - answers(user_id) – (optional) fetch answers by user
-
 - votes(item_id, item_type) – get votes for a question/answer
-
 - votes(user_id, item_id, item_type) – check if user already voted (enforces uniqueness, speeds up vote updates)
-
-
 ---
 
 ## Setup & Run
@@ -51,7 +46,6 @@ votes - id, user_id, item_id, item_type, vote_type, created_at, updated_at
 
 * Go >= 1.24
 * Docker + Docker Compose
-* Gemini API Key
 
 ### Clone and Configure
 
@@ -61,9 +55,8 @@ cd stackoverflow-sample
 
 # Create .env file and set your variables
 cp .env.example .env
-# Fill in the creds
 ```
-<!-- 
+
 ### 🐳 Run with Docker Compose
 
 ```bash
@@ -76,7 +69,7 @@ docker-compose up --build
 http://localhost:8080
 ```
 
---- -->
+---
 
 
 ---
@@ -134,7 +127,7 @@ Response:
 GET /api/test
 ```
 ```bash
-curl -X POST http://localhost:8080/api/questions \
+curl -X GET http://localhost:8080/api/test \
   -H "Authorization: Bearer <your-token>"
 ```
 Response:
@@ -147,14 +140,14 @@ Response:
 ### Post Question
 
 ```
-POST /api/questions
+POST /api/createQuestion
 {
   "title": "How is this even a question?",
   "body": "This is beyond me"
 }
 ```
 ```bash
-curl -X POST http://localhost:8080/api/questions \
+curl -X POST http://localhost:8080/api/createQuestion \
   -H "Authorization: Bearer <your-token>" \
   -H "Content-Type: application/json" \
   -d '{"title":"How is this even a question?","body":"This is beyond me..."}'
@@ -171,48 +164,48 @@ Response:
 ### Post Answer
 
 ```
-POST /api/questions/:id/answers
+POST /api/question/:id/createAnswer
 {
   "body": "This cannot be an answer."
 }
 ```
 ```bash
-curl -X POST http://localhost:8080/api/questions/1/answers \
+curl -X POST http://localhost:8080/api/question/1/createAnswer \
   -H "Authorization: Bearer <your-token>" \
   -H "Content-Type: application/json" \
   -d '{"body":"This cannot be an answer."}'
 
 ```
 
-Response:
-```
-{
-  "message": "Answer posted",
-  "answer_id": 4
-}
+
+### Fetch question and answers
+```bash
+curl -X GET http://localhost:8080/api/getQnA/1 \
+-H "Authorization: Bearer <token-here>";
+
 ```
 
 ### Vote on Question or Answer
 
 ```
-POST /api/questions/:id/vote
+POST /api/question/:id/vote
 {
   "vote": "upvote" | "downvote" | "remove"
 }
 
-POST /api/answers/:id/vote
+POST /api/answer/:id/vote
 {
   "vote": "upvote" | "downvote" | "remove"
 }
 ```
 ```bash
-curl -X POST http://localhost:8080/api/questions/1/vote \
+curl -X POST http://localhost:8080/api/question/1/vote \
   -H "Authorization: Bearer <your-token>" \
   -H "Content-Type: application/json" \
   -d '{"vote":"upvote"}' # or "downvote" or "remove"
 
 
-curl -X POST http://localhost:8080/api/answers/4/vote \
+curl -X POST http://localhost:8080/api/answer/4/vote \
   -H "Authorization: Bearer <your-token>" \
   -H "Content-Type: application/json" \
   -d '{"vote":"downvote"}'
@@ -229,10 +222,10 @@ Response:
 ### Get Summary
 
 ```
-GET /api/questions/:id/summary
+GET /api/question/:id/summary
 ```
 ```bash
-curl -X GET http://localhost:8080/api/questions/1/summary \
+curl -X GET http://localhost:8080/api/question/1/summary \
   -H "Authorization: Bearer <your-token>"
 
 ```
@@ -240,6 +233,7 @@ curl -X GET http://localhost:8080/api/questions/1/summary \
 Response:
 ```
 {
+  "question_id": <id>, 
   "summary": "summary-here"
 }
 ```

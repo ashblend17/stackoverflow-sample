@@ -57,20 +57,17 @@ cd stackoverflow-sample
 cp .env.example .env
 ```
 
-### 🐳 Run with Docker Compose
+### Run with Docker Compose
 
 ```bash
 docker-compose up --build
-``` -->
+```
 
-<!-- ### 🌐 Server will be live at:
+### Server will be live at:
 
 ```
 http://localhost:8080
 ```
-
----
-
 
 ---
 
